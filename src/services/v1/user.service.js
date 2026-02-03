@@ -1,0 +1,26 @@
+const Users = require("../../models/v1/users.model");
+
+const fetchUsersService = async (query) => {
+  const { name, page = 1 } = query;
+  const limit = 5;
+
+  let filter = {};
+
+  if (name && name.trim() !== "") {
+    filter = {
+      userName: { $regex: name, $options: "i" },
+    };
+  }
+
+  const users = await Users.find(filter)
+    .select("_id userName userFullName")
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * limit) 
+    .limit(limit);
+
+  return users; 
+};
+
+
+
+module.exports = { fetchUsersService };
