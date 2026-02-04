@@ -1,4 +1,7 @@
-const { chatRoomService } = require("../../services/v1/chat.service");
+const {
+  chatRoomService,
+  myChatsService,
+} = require("../../services/v1/chat.service");
 
 const chatRoomController = async (req, res) => {
   try {
@@ -21,4 +24,21 @@ const chatRoomController = async (req, res) => {
   }
 };
 
-module.exports = { chatRoomController };
+const myChatsController = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const chats = await myChatsService(id);
+
+    return res
+      .status(200)
+      .json({ success: true, message: "chats fached successfully", chats });
+  } catch (err) {
+    if (err.message === "no chats found") {
+      return res.status(404).json({ success: false, error: err.message });
+    }
+
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+module.exports = { chatRoomController, myChatsController };

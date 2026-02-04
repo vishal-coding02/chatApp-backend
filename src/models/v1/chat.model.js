@@ -14,6 +14,7 @@ const ChatRoomSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
       required: true,
+      index: true
     },
 
     lastMessage: {

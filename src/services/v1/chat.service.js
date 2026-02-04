@@ -28,4 +28,21 @@ const chatRoomService = async (data) => {
   return createdChat;
 };
 
-module.exports = { chatRoomService };
+const myChatsService = async (id) => {
+  const chats = await ChatRoom.find({
+    $or: [
+      { createdBy: id },
+      {
+        $and: [{ participants: id }, { status: "active" }],
+      },
+    ],
+  });
+
+  if (chats.length === 0) {
+    throw new Error("no chats found");
+  }
+
+  return chats;
+};
+
+module.exports = { chatRoomService, myChatsService };
