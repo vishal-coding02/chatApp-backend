@@ -1,6 +1,8 @@
+
 const {
   chatRoomService,
   myChatsService,
+  getPendingRequestsService
 } = require("../../services/v1/chat.service");
 
 const chatRoomController = async (req, res) => {
@@ -41,4 +43,24 @@ const myChatsController = async (req, res) => {
   }
 };
 
-module.exports = { chatRoomController, myChatsController };
+
+const getPendingRequestsController = async (req, res) => {
+  try {
+    const { id } = req.user;
+
+    const requests = await getPendingRequestsService(id);
+
+    return res.status(200).json({
+      success: true,
+      requests,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      error: err.message,
+    });
+  }
+};
+
+
+module.exports = { chatRoomController, myChatsController , getPendingRequestsController};

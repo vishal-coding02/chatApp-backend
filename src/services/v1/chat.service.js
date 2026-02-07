@@ -36,7 +36,9 @@ const myChatsService = async (id) => {
         $and: [{ participants: id }, { status: "active" }],
       },
     ],
-  });
+  })
+    .populate("participants", "userFullName userName ")
+    .sort({ updatedAt: -1 });
 
   if (chats.length === 0) {
     throw new Error("no chats found");
@@ -45,4 +47,16 @@ const myChatsService = async (id) => {
   return chats;
 };
 
-module.exports = { chatRoomService, myChatsService };
+const getPendingRequestsService = async (userId) => {
+  const requests = await ChatRoom.find({
+    status: "pending",
+    participants: userId,
+    createdBy: { $ne: userId },
+  })
+    .populate("participants", "userFullName userName")
+    .sort({ updatedAt: -1 });
+
+  return requests;
+};
+
+module.exports = { chatRoomService, myChatsService, getPendingRequestsService };

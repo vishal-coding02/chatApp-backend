@@ -4,13 +4,13 @@ const MessageSchema = new mongoose.Schema(
   {
     chatRoomId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "ChatRoom",
+      ref: "chatRoom",
       required: true,
     },
 
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
+      ref: "users",
       required: true,
     },
 
@@ -18,13 +18,6 @@ const MessageSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-
-    seenBy: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "user",
-      },
-    ],
   },
   { timestamps: true },
 );

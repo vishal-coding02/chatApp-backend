@@ -1,0 +1,25 @@
+const { sendMessageService } = require("../../services/v1/message.service");
+
+const sendMessageController = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const result = await sendMessageService(req.body, id);
+
+    return res
+      .status(201)
+      .json({ success: true, message: "message sent successfully", result });
+  } catch (err) {
+    if (
+      err.message === "not allowed in this chat" ||
+      err.message === "chat request pending, wait for accept"
+    ) {
+      return res.status(403).json({ success: false, error: err.message });
+    }
+    return res.status(400).json({
+      success: false,
+      error: err.message,
+    });
+  }
+};
+
+module.exports = { sendMessageController };

@@ -6,6 +6,7 @@ const app = express();
 const refresTokenRouter = require("./src/routes/v1/refreshToken.route");
 const userRouter = require("./src/routes/v1/user.route");
 const chatRouter = require("./src/routes/v1/chat.route");
+const messageRouter = require("./src/routes/v1/message.route");
 
 app.use(cookieParser());
 app.use(
@@ -23,6 +24,7 @@ app.use(express.json());
 app.use(authRouter);
 app.use(userRouter);
 app.use(chatRouter);
+app.use(messageRouter);
 app.use(refresTokenRouter);
 
 module.exports = { app };
