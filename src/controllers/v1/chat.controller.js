@@ -1,8 +1,8 @@
-
 const {
   chatRoomService,
   myChatsService,
-  getPendingRequestsService
+  getPendingRequestsService,
+  acceptMessageRequestService,
 } = require("../../services/v1/chat.service");
 
 const chatRoomController = async (req, res) => {
@@ -43,7 +43,6 @@ const myChatsController = async (req, res) => {
   }
 };
 
-
 const getPendingRequestsController = async (req, res) => {
   try {
     const { id } = req.user;
@@ -62,5 +61,32 @@ const getPendingRequestsController = async (req, res) => {
   }
 };
 
+const acceptMessageRequestController = async (req, res) => {
+  try {
+    const userID = req.user.id;
 
-module.exports = { chatRoomController, myChatsController , getPendingRequestsController};
+    const updatedChat = await acceptMessageRequestService(req.body, userID);
+
+    return res.status(200).json({
+      success: true,
+      message: "Request accepted",
+      chat: updatedChat,
+    });
+  } catch (err) {
+    if (
+      er.message === "chat not exist" ||
+      err.message === "participant not found"
+    ) {
+      return res.statsu(404).json({ success: false, error: err.message });
+    }
+
+    return res.statsu(500).json({ success: false, error: err.message });
+  }
+};
+
+module.exports = {
+  chatRoomController,
+  myChatsController,
+  getPendingRequestsController,
+  acceptMessageRequestController,
+};

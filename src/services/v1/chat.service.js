@@ -59,4 +59,30 @@ const getPendingRequestsService = async (userId) => {
   return requests;
 };
 
-module.exports = { chatRoomService, myChatsService, getPendingRequestsService };
+const acceptMessageRequestService = async (data, userID) => {
+  const { chatRoomId } = data;
+
+  const chat = await ChatRoom.findById(chatRoomId);
+
+  if (!chat) {
+    throw new Error("chat not exist");
+  }
+
+  const isParticipant = chat.participants.some((p) => p.toString() === userID);
+
+  if (!isParticipant) {
+    throw new Error("participant not found");
+  }
+
+  chat.status = "active";
+  await chat.save();
+
+  return chat;
+};
+
+module.exports = {
+  chatRoomService,
+  myChatsService,
+  getPendingRequestsService,
+  acceptMessageRequestService,
+};
