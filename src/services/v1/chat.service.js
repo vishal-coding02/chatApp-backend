@@ -28,4 +28,61 @@ const chatRoomService = async (data) => {
   return createdChat;
 };
 
-module.exports = { chatRoomService };
+const myChatsService = async (id) => {
+  const chats = await ChatRoom.find({
+    $or: [
+      { createdBy: id },
+      {
+        $and: [{ participants: id }, { status: "active" }],
+      },
+    ],
+  })
+    .populate("participants", "userFullName userName ")
+    .sort({ updatedAt: -1 });
+
+  if (chats.length === 0) {
+    throw new Error("no chats found");
+  }
+
+  return chats;
+};
+
+const getPendingRequestsService = async (userId) => {
+  const requests = await ChatRoom.find({
+    status: "pending",
+    participants: userId,
+    createdBy: { $ne: userId },
+  })
+    .populate("participants", "userFullName userName")
+    .sort({ updatedAt: -1 });
+
+  return requests;
+};
+
+const acceptMessageRequestService = async (data, userID) => {
+  const { chatRoomId } = data;
+
+  const chat = await ChatRoom.findById(chatRoomId);
+
+  if (!chat) {
+    throw new Error("chat not exist");
+  }
+
+  const isParticipant = chat.participants.some((p) => p.toString() === userID);
+
+  if (!isParticipant) {
+    throw new Error("participant not found");
+  }
+
+  chat.status = "active";
+  await chat.save();
+
+  return chat;
+};
+
+module.exports = {
+  chatRoomService,
+  myChatsService,
+  getPendingRequestsService,
+  acceptMessageRequestService,
+};

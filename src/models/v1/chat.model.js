@@ -14,6 +14,7 @@ const ChatRoomSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "users",
       required: true,
+      index: true,
     },
 
     lastMessage: {
@@ -22,7 +23,8 @@ const ChatRoomSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      required: true,
+      enum: ["pending", "active", "rejected"],
+      default: "pending",
     },
   },
   { timestamps: true },
