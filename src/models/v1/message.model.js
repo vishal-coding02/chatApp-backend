@@ -6,6 +6,7 @@ const MessageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "chatRoom",
       required: true,
+      index: true,
     },
 
     senderId: {

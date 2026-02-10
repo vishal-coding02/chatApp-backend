@@ -1,4 +1,7 @@
-const { sendMessageService } = require("../../services/v1/message.service");
+const {
+  sendMessageService,
+  getMessageService,
+} = require("../../services/v1/message.service");
 
 const sendMessageController = async (req, res) => {
   try {
@@ -22,4 +25,27 @@ const sendMessageController = async (req, res) => {
   }
 };
 
-module.exports = { sendMessageController };
+const getMessageController = async (req, res) => {
+  try {
+    const messages = await getMessageService(req.params.id);
+    return res.status(201).json({
+      success: true,
+      message: "message fetched successfully",
+      messages,
+    });
+  } catch (err) {
+    if (err.message === "messages not found") {
+      return res.status(404).json({
+        success: false,
+        error: err.message,
+      });
+    }
+
+    return res.status(400).json({
+      success: false,
+      error: err.message,
+    });
+  }
+};
+
+module.exports = { sendMessageController, getMessageController };
