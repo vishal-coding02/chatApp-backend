@@ -21,6 +21,15 @@ const ChatRoomSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+
+    hasMessage:{
+      type : Boolean,
+      required : true
+    },
+
+    lastMessageAt: {
+      type: Date,
+    },
     status: {
       type: String,
       enum: ["pending", "active", "rejected"],

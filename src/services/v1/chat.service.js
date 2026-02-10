@@ -21,6 +21,7 @@ const chatRoomService = async (data) => {
     createdBy: participant1._id,
     lastMessage: lastMessage || "",
     status: "pending",
+    hasMessage: false,
   };
 
   const createdChat = await ChatRoom.create(newChat);
@@ -50,6 +51,7 @@ const myChatsService = async (id) => {
 const getPendingRequestsService = async (userId) => {
   const requests = await ChatRoom.find({
     status: "pending",
+    hasMessage: true,
     participants: userId,
     createdBy: { $ne: userId },
   })

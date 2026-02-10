@@ -2,7 +2,7 @@ const Users = require("../../models/v1/users.model");
 
 const fetchUsersService = async (query) => {
   const { name, page = 1 } = query;
-  const limit = 5;
+  const limit = 3;
 
   let filter = {};
 
@@ -15,12 +15,10 @@ const fetchUsersService = async (query) => {
   const users = await Users.find(filter)
     .select("_id userName userFullName")
     .sort({ createdAt: -1 })
-    .skip((page - 1) * limit) 
+    .skip((page - 1) * limit)
     .limit(limit);
 
-  return users; 
+  return users;
 };
-
-
 
 module.exports = { fetchUsersService };

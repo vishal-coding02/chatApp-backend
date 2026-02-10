@@ -38,9 +38,21 @@ const sendMessageService = async (data, userId) => {
   });
 
   chat.lastMessage = text;
+  chat.lastMessageAt = new Date();
+  chat.hasMessage = true;
   await chat.save();
 
   return newMessage;
 };
 
-module.exports = { sendMessageService };
+const getMessageService = async (chatID) => {
+  const messages = await Message.find({ chatRoomId: chatID });
+
+  if (!messages) {
+    throw new Error("messages not found");
+  }
+
+  return messages;
+};
+
+module.exports = { sendMessageService, getMessageService };
