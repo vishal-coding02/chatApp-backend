@@ -37,7 +37,7 @@ const loginController = async (req, res) => {
       return res.status(401).json({ success: false, error: err.message });
     }
 
-    return res.staus(500).json({ success: false, error: err.message });
+    return res.status(500).json({ success: false, error: err.message });
   }
 };
 
