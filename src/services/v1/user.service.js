@@ -21,4 +21,14 @@ const fetchUsersService = async (query) => {
   return users;
 };
 
-module.exports = { fetchUsersService };
+const userProfileService = async (id) => {
+  const user = await Users.findById(id);
+
+  if (!user) {
+    throw new Error("user not found");
+  }
+
+  return user;
+};
+
+module.exports = { fetchUsersService, userProfileService };
