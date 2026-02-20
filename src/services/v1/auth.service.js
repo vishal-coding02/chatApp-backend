@@ -1,9 +1,10 @@
 const Users = require("../../models/v1/users.model");
 const bcrypt = require("bcryptjs");
 const { generateToken } = require("../../libs/auth/JwtToken");
+const cloudinary = require("../../libs/cloudinary");
 
 const signUpService = async (data) => {
-  const { fullname, username, email, password } = data;
+  const { fullname, username, email, password, profilePic } = data;
 
   const existingUser = await Users.findOne({
     $or: [{ userEmail: email }],
@@ -15,11 +16,20 @@ const signUpService = async (data) => {
 
   const hashPass = await bcrypt.hash(password, 10);
 
+  let uploadedImage = null;
+  if (profilePic) {
+    const uploadResponse = await cloudinary.uploader.upload(profilePic, {
+      folder: "providers",
+    });
+    uploadedImage = uploadResponse.secure_url;
+  }
+
   const user = await Users.create({
     userFullName: fullname,
     userName: username,
     userEmail: email,
     userPassword: hashPass,
+    profilePic: uploadedImage,
   });
 
   return user;

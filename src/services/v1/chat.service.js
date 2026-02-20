@@ -38,7 +38,7 @@ const myChatsService = async (id) => {
       },
     ],
   })
-    .populate("participants", "userFullName userName ")
+    .populate("participants", "userFullName userName profilePic")
     .sort({ updatedAt: -1 });
 
   if (chats.length === 0) {
@@ -55,7 +55,7 @@ const getPendingRequestsService = async (userId) => {
     participants: userId,
     createdBy: { $ne: userId },
   })
-    .populate("participants", "userFullName userName")
+    .populate("participants", "userFullName userName profilePic")
     .sort({ updatedAt: -1 });
 
   return requests;

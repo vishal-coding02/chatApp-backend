@@ -13,7 +13,7 @@ const fetchUsersService = async (query) => {
   }
 
   const users = await Users.find(filter)
-    .select("_id userName userFullName")
+    .select("_id userName userFullName profilePic")
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
     .limit(limit);
