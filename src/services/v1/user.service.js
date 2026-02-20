@@ -13,7 +13,7 @@ const fetchUsersService = async (query) => {
   }
 
   const users = await Users.find(filter)
-    .select("_id userName userFullName")
+    .select("_id userName userFullName profilePic")
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
     .limit(limit);
@@ -21,4 +21,14 @@ const fetchUsersService = async (query) => {
   return users;
 };
 
-module.exports = { fetchUsersService };
+const userProfileService = async (id) => {
+  const user = await Users.findById(id);
+
+  if (!user) {
+    throw new Error("user not found");
+  }
+
+  return user;
+};
+
+module.exports = { fetchUsersService, userProfileService };
