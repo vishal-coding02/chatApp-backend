@@ -16,6 +16,14 @@ const chatRoomService = async (data) => {
     throw new Error("participant2 not found");
   }
 
+  const chatExists = await ChatRoom.findOne({
+    participants: { $all: [participant1._id, participant2._id] },
+  });
+
+  if (chatExists) {
+    throw new Error("Chat room already exists");
+  }
+
   const newChat = {
     participants: [participant1._id, participant2._id],
     createdBy: participant1._id,

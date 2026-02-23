@@ -28,7 +28,7 @@ const sendMessageController = async (req, res) => {
 const getMessageController = async (req, res) => {
   try {
     const messages = await getMessageService(req.params.id);
-    return res.status(201).json({
+    return res.status(200).json({
       success: true,
       message: "message fetched successfully",
       messages,
