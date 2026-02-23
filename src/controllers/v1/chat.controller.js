@@ -15,6 +15,9 @@ const chatRoomController = async (req, res) => {
       roomId: chatRoom._id,
     });
   } catch (err) {
+    if (err.message === "Chat room already exists") {
+      return res.status(409).json({ success: false, error: err.message });
+    }
     if (
       err.message === "participant1 not found" ||
       err.message === "participant2 not found"
