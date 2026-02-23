@@ -18,7 +18,7 @@ function generateToken(user) {
       name: user.userName,
     },
     JWT_REFRESH_SECRET_KEY,
-    { expiresIn: "1d" },
+    { expiresIn: "7d" },
   );
   console.log(refreshToken);
 
