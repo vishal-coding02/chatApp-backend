@@ -52,6 +52,7 @@ async function loginService(data, res) {
     secure: true,
     sameSite: "None",
     path: "/",
+    maxAge: 7 * 24 * 60 * 60 * 1000
   });
 
   return { accessToken, user };
