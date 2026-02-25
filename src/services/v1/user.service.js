@@ -22,7 +22,7 @@ const fetchUsersService = async (query) => {
 };
 
 const userProfileService = async (id) => {
-  const user = await Users.findById(id);
+  const user = await Users.findById(id).select("-userPassword");
 
   if (!user) {
     throw new Error("user not found");

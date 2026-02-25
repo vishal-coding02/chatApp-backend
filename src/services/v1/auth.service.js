@@ -32,7 +32,7 @@ const signUpService = async (data) => {
     profilePic: uploadedImage,
   });
 
-  return user;
+  return true;
 };
 
 async function loginService(data, res) {
@@ -52,10 +52,13 @@ async function loginService(data, res) {
     secure: true,
     sameSite: "None",
     path: "/",
-    maxAge: 7 * 24 * 60 * 60 * 1000
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
-  return { accessToken, user };
+  const userWithoutPassword = user.toObject();
+  delete userWithoutPassword.userPassword;
+
+  return { accessToken, user: userWithoutPassword };
 }
 
 module.exports = { signUpService, loginService };

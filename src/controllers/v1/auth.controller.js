@@ -5,12 +5,11 @@ const {
 
 const signUpController = async (req, res) => {
   try {
-    const user = await signUpService(req.body);
+    await signUpService(req.body);
 
     return res.status(201).json({
       success: true,
       message: "user created successfully",
-      userData: user,
     });
   } catch (err) {
     if (err.message === "User already exists") {
