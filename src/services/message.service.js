@@ -1,6 +1,6 @@
-const Message = require("../../models/v1/message.model");
-const ChatRoom = require("../../models/v1/chat.model");
-const Users = require("../../models/v1/users.model");
+const Message = require("../models/message.model");
+const ChatRoom = require("../models/chat.model");
+const Users = require("../models/users.model");
 
 const sendMessageService = async (data, userId) => {
   const { chatRoomId, text } = data;

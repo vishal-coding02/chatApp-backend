@@ -3,7 +3,7 @@ const {
   myChatsService,
   getPendingRequestsService,
   acceptMessageRequestService,
-} = require("../../services/v1/chat.service");
+} = require("../services/chat.service");
 
 const chatRoomController = async (req, res) => {
   try {

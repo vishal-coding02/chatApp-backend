@@ -1,7 +1,7 @@
 const {
   fetchUsersService,
   userProfileService,
-} = require("../../services/v1/user.service");
+} = require("../services/user.service");
 
 const fetchUsersController = async (req, res) => {
   try {

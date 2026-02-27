@@ -1,4 +1,4 @@
-const Users = require("../../models/v1/users.model");
+const Users = require("../models/users.model");
 
 const fetchUsersService = async (query) => {
   const { name, page = 1 } = query;

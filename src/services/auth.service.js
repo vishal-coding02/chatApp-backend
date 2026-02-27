@@ -1,7 +1,7 @@
-const Users = require("../../models/v1/users.model");
+const Users = require("../models/users.model");
 const bcrypt = require("bcryptjs");
-const { generateToken } = require("../../libs/auth/JwtToken");
-const cloudinary = require("../../libs/cloudinary");
+const { generateToken } = require("../libs/auth/JwtToken");
+const cloudinary = require("../libs/cloudinary");
 
 const signUpService = async (data) => {
   const { fullname, username, email, password, profilePic } = data;

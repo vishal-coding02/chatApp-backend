@@ -1,7 +1,7 @@
 const {
   signUpService,
   loginService,
-} = require("../../services/v1/auth.service");
+} = require("../services/auth.service");
 
 const signUpController = async (req, res) => {
   try {

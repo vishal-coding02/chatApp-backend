@@ -1,7 +1,7 @@
 const {
   sendMessageService,
   getMessageService,
-} = require("../../services/v1/message.service");
+} = require("../services/message.service");
 
 const sendMessageController = async (req, res) => {
   try {

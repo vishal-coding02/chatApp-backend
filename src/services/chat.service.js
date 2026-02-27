@@ -1,5 +1,5 @@
-const ChatRoom = require("../../models/v1/chat.model");
-const Users = require("../../models/v1/users.model");
+const ChatRoom = require("../models/chat.model");
+const Users = require("../models/users.model");
 
 const chatRoomService = async (data) => {
   const { participant1ID, participant2ID, lastMessage } = data;
