@@ -1,14 +1,11 @@
 require("dotenv").config();
-const nodemailer = require("nodemailer");
+const SibApiV3Sdk = require("sib-api-v3-sdk");
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false,
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+const client = SibApiV3Sdk.ApiClient.instance;
+
+const apiKey = client.authentications["api-key"];
+apiKey.apiKey = process.env.BREVO_API_KEY;
+
+const transporter = new SibApiV3Sdk.TransactionalEmailsApi();
 
 module.exports = { transporter };
