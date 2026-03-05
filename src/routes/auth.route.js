@@ -5,10 +5,13 @@ const {
   signUpController,
   loginController,
   logoutController,
+  verifyEmailController,
 } = require("../controllers/auth.controller");
 
+authRouter.post("/api/auth/verify-email", verifyEmailController);
 authRouter.post("/api/auth/signUp", signUpController);
 authRouter.post("/api/auth/login", loginController);
 authRouter.post("/api/auth/logout", logoutController);
+
 
 module.exports = authRouter;

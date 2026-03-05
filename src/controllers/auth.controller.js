@@ -1,6 +1,7 @@
 const {
   signUpService,
   loginService,
+  verifyEmailService,
 } = require("../services/auth.service");
 
 const signUpController = async (req, res) => {
@@ -36,6 +37,13 @@ const loginController = async (req, res) => {
       return res.status(401).json({ success: false, error: err.message });
     }
 
+    if (err.message === "Email not verified") {
+      return res.status(403).json({
+        success: false,
+        error: "Email not verified. Check your email.",
+      });
+    }
+
     return res.status(500).json({ success: false, error: err.message });
   }
 };
@@ -56,4 +64,27 @@ async function logoutController(req, res) {
   }
 }
 
-module.exports = { signUpController, loginController, logoutController };
+const verifyEmailController = async (req, res) => {
+  try {
+    const { token } = req.body;
+
+    const user = await verifyEmailService(token);
+    return res.status(200).json({
+      success: true,
+      message: "email verified successfully",
+      user,
+    });
+  } catch (err) {
+    if (err.message === "Invalid or Expired Token") {
+      return res.status(400).json({ success: false, message: err.message });
+    }
+    return res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+module.exports = {
+  signUpController,
+  loginController,
+  logoutController,
+  verifyEmailController,
+};
