@@ -17,12 +17,16 @@ const io = new Server(server, {
   },
 });
 
+const onlineUsers = new Set();
+
 io.on("connection", (socket) => {
   console.log("socket connected:", socket.id);
 
   socket.on("identify", (userId) => {
     socket.userId = userId;
-    console.log("user identified:", userId);
+    onlineUsers.add(userId.toString());
+
+    io.emit("onlineUsers", Array.from(onlineUsers));
   });
 
   socket.on("joinRooms", ({ user, room }) => {
@@ -36,8 +40,20 @@ io.on("connection", (socket) => {
     socket.emit("message", { from, message, self: true });
   });
 
+  socket.on("typing", ({ room, from }) => {
+    socket.to(room).emit("userTyping", { userId: from, room });
+  });
+
+  socket.on("stopTyping", ({ room, from }) => {
+    socket.to(room).emit("userStopTyping", { userId: from, room });
+  });
+
   socket.on("disconnect", () => {
-    console.log("socket disconnected:", socket.id);
+    if (socket.userId) {
+      onlineUsers.delete(socket.userId.toString());
+      io.emit("onlineUsers", Array.from(onlineUsers));
+    }
+    console.log("socket disconnected:");
   });
 });
 
