@@ -1,9 +1,9 @@
-const Users = require("../models/users.model");
+const Users = require("../user/user.model");
 const crypto = require("crypto");
 const bcrypt = require("bcryptjs");
-const { generateToken } = require("../libs/auth/JwtToken");
-const cloudinary = require("../libs/cloudinary");
-const { sendEmail } = require("../utils/Email");
+const { generateToken } = require("../../libs/auth/JwtToken");
+const cloudinary = require("../../libs/cloudinary");
+const { sendEmail } = require("../../utils/Email");
 const Token_EXPIRY_MINUTES = 5;
 
 const signUpService = async (data) => {

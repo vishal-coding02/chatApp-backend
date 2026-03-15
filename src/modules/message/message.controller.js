@@ -1,7 +1,8 @@
 const {
   sendMessageService,
   getMessageService,
-} = require("../services/message.service");
+  messageDeleteService,
+} = require("../message/message.service");
 
 const sendMessageController = async (req, res) => {
   try {
@@ -27,7 +28,8 @@ const sendMessageController = async (req, res) => {
 
 const getMessageController = async (req, res) => {
   try {
-    const messages = await getMessageService(req.params.id);
+    const { conversationId } = req.params;
+    const messages = await getMessageService(conversationId);
     return res.status(200).json({
       success: true,
       message: "message fetched successfully",
@@ -48,4 +50,28 @@ const getMessageController = async (req, res) => {
   }
 };
 
-module.exports = { sendMessageController, getMessageController };
+const messageDeleteController = async (req, res) => {
+  try {
+    const { messageId } = req.params;
+    const result = await messageDeleteService(messageId, req.user);
+    res.status(200).json({
+      success: true,
+      messaage: "Message deleted successfully",
+      updatedChat: result.updatedChat,
+    });
+  } catch (err) {
+    if (err.message === "Message not found") {
+      return res.status(404).json({ success: false, message: err.message });
+    }
+    if (err.message === "You can only delete your own messages") {
+      return res.status(403).json({ success: false, message: err.message });
+    }
+    return res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+module.exports = {
+  sendMessageController,
+  getMessageController,
+  messageDeleteController,
+};

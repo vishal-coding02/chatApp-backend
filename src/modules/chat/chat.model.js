@@ -22,9 +22,9 @@ const ChatRoomSchema = new mongoose.Schema(
       default: "",
     },
 
-    hasMessage:{
-      type : Boolean,
-      required : true
+    hasMessage: {
+      type: Boolean,
+      required: true,
     },
 
     lastMessageAt: {
@@ -35,6 +35,9 @@ const ChatRoomSchema = new mongoose.Schema(
       enum: ["pending", "active", "rejected"],
       default: "pending",
     },
+    deletedBy: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "users", required: false },
+    ],
   },
   { timestamps: true },
 );

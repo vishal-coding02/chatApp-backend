@@ -2,7 +2,7 @@ const {
   signUpService,
   loginService,
   verifyEmailService,
-} = require("../services/auth.service");
+} = require("../auth/auth.service");
 
 const signUpController = async (req, res) => {
   try {
