@@ -1,5 +1,5 @@
-const ChatRoom = require("../models/chat.model");
-const Users = require("../models/users.model");
+const ChatRoom = require("../chat/chat.model");
+const Users = require("../user/user.model");
 
 const chatRoomService = async (data) => {
   const { participant1ID, participant2ID, lastMessage } = data;
@@ -30,6 +30,7 @@ const chatRoomService = async (data) => {
     lastMessage: lastMessage || "",
     status: "pending",
     hasMessage: false,
+    deletedBy: [],
   };
 
   const createdChat = await ChatRoom.create(newChat);
@@ -40,9 +41,13 @@ const chatRoomService = async (data) => {
 const myChatsService = async (id) => {
   const chats = await ChatRoom.find({
     $or: [
-      { createdBy: id },
+      { createdBy: id, deletedBy: { $ne: id } },
       {
-        $and: [{ participants: id }, { status: "active" }],
+        $and: [
+          { participants: id },
+          { status: "active" },
+          { deletedBy: { $ne: id } },
+        ],
       },
     ],
   })
@@ -69,10 +74,8 @@ const getPendingRequestsService = async (userId) => {
   return requests;
 };
 
-const acceptMessageRequestService = async (data, userID) => {
-  const { chatRoomId } = data;
-
-  const chat = await ChatRoom.findById(chatRoomId);
+const acceptMessageRequestService = async (chatId, userID) => {
+  const chat = await ChatRoom.findById(chatId);
 
   if (!chat) {
     throw new Error("chat not exist");
@@ -90,9 +93,37 @@ const acceptMessageRequestService = async (data, userID) => {
   return chat;
 };
 
+const chatDeleteService = async (userId, chatId) => {
+  const chat = await ChatRoom.findById(chatId);
+
+  if (!chat) {
+    throw new Error("chat not exist");
+  }
+
+  const isParticipant = chat.participants.some(
+    (p) => p.toString() === userId.toString(),
+  );
+
+  if (!isParticipant) {
+    throw new Error("not allowed");
+  }
+
+  const alreadyDeleted = chat.deletedBy.some(
+    (id) => id.toString() === userId.toString(),
+  );
+
+  if (!alreadyDeleted) {
+    chat.deletedBy.push(userId);
+    await chat.save();
+  }
+
+  return true;
+};
+
 module.exports = {
   chatRoomService,
   myChatsService,
   getPendingRequestsService,
   acceptMessageRequestService,
+  chatDeleteService,
 };
