@@ -21,7 +21,8 @@ const fetchUsersController = async (req, res) => {
 
 const userProfileController = async (req, res) => {
   try {
-    const { id } = req.user;
+    // const { id } = req.user;
+    const { id } = req.params;
     const user = await userProfileService(id);
 
     res.status(200).json({

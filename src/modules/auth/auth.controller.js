@@ -13,6 +13,12 @@ const signUpController = async (req, res) => {
       message: "user created successfully",
     });
   } catch (err) {
+    if (
+      err.message === "Please fill in all required fields" ||
+      err.message === "Please enter a valid email address"
+    ) {
+      return res.status(400).json({ success: false, error: err.message });
+    }
     if (err.message === "User already exists") {
       return res.status(409).json({ success: false, error: err.message });
     }
@@ -30,6 +36,9 @@ const loginController = async (req, res) => {
       message: "Login Successfull",
     });
   } catch (err) {
+    if (err.message === "Please fill in all required fields") {
+      return res.status(400).json({ success: false, error: err.message });
+    }
     if (err.message === "User not found") {
       return res.status(404).json({ success: false, error: err.message });
     }

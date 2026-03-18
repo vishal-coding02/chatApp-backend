@@ -7,7 +7,17 @@ const { sendEmail } = require("../../utils/Email");
 const Token_EXPIRY_MINUTES = 5;
 
 const signUpService = async (data) => {
-  const { fullname, username, email, password, profilePic } = data;
+  const { fullName, username, email, password, profilePic } = data;
+
+  if (!fullName || !username || !email || !password) {
+    throw new Error("Please fill in all required fields");
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (!emailRegex.test(email)) {
+    throw new Error("Please enter a valid email address");
+  }
 
   const existingUser = await Users.findOne({
     $or: [{ userEmail: email }],
@@ -38,7 +48,7 @@ const signUpService = async (data) => {
   expiryTime.setMinutes(expiryTime.getMinutes() + Token_EXPIRY_MINUTES);
 
   const user = await Users.create({
-    userFullName: fullname,
+    userFullName: fullName,
     userName: username,
     userEmail: email,
     userPassword: hashPass,
@@ -61,6 +71,10 @@ const signUpService = async (data) => {
 
 async function loginService(data, res) {
   const { email, password } = data;
+
+  if (!email || !password) {
+    throw new Error("Please fill in all required fields");
+  }
 
   const user = await Users.findOne({ userEmail: email });
 

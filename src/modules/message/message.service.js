@@ -56,14 +56,27 @@ const sendMessageService = async (data, userId) => {
   return newMessage;
 };
 
-const getMessageService = async (conversationId) => {
-  const messages = await Message.find({ chatRoomId: conversationId });
+const getMessageService = async (conversationId, page = 1, limit = 20) => {
+  const skip = (page - 1) * limit;
+
+  const messages = await Message.find({ chatRoomId: conversationId })
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit);
 
   if (messages.length === 0) {
     throw new Error("messages not found");
   }
 
-  return messages;
+  const totalMessages = await Message.countDocuments({
+    chatRoomId: conversationId,
+  });
+
+  return {
+    messages: messages.reverse(),
+    totalMessages,
+    hasMore: skip + messages.length < totalMessages,
+  };
 };
 
 const messageDeleteService = async (messageId, user) => {

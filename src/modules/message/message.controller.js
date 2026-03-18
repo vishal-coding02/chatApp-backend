@@ -29,24 +29,23 @@ const sendMessageController = async (req, res) => {
 const getMessageController = async (req, res) => {
   try {
     const { conversationId } = req.params;
-    const messages = await getMessageService(conversationId);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+
+    const result = await getMessageService(conversationId, page, limit);
+
     return res.status(200).json({
       success: true,
       message: "message fetched successfully",
-      messages,
+      messages: result.messages,
+      hasMore: result.hasMore,
+      totalMessages: result.totalMessages,
     });
   } catch (err) {
     if (err.message === "messages not found") {
-      return res.status(404).json({
-        success: false,
-        error: err.message,
-      });
+      return res.status(404).json({ success: false, error: err.message });
     }
-
-    return res.status(400).json({
-      success: false,
-      error: err.message,
-    });
+    return res.status(400).json({ success: false, error: err.message });
   }
 };
 
