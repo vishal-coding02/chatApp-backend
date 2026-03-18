@@ -1,7 +1,7 @@
 const {
   fetchUsersService,
   userProfileService,
-} = require("../services/user.service");
+} = require("../user/user.service");
 
 const fetchUsersController = async (req, res) => {
   try {
@@ -21,6 +21,7 @@ const fetchUsersController = async (req, res) => {
 
 const userProfileController = async (req, res) => {
   try {
+    // const { id } = req.user;
     const { id } = req.params;
     const user = await userProfileService(id);
 
