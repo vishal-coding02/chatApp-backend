@@ -10,7 +10,7 @@ const sendEmail = async ({ toEmail, userFullName, token }) => {
   ).replace(/{token}/g, verifyLink);
 
   try {
-    const response = await transporter.sendTransacEmail({
+    await transporter.sendTransacEmail({
       sender: {
         email: process.env.SMTP_USER,
         name: "ChatHub",
@@ -23,8 +23,6 @@ const sendEmail = async ({ toEmail, userFullName, token }) => {
       subject: "Verify Your Email - ChatHub",
       htmlContent: htmlContent,
     });
-
-    console.log("EMAIL RESPONSE:", response);
   } catch (error) {
     console.error("Error sending verify email:", error);
     throw new Error("Email sending failed");

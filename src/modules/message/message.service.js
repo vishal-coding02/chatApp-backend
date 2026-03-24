@@ -56,26 +56,25 @@ const sendMessageService = async (data, userId) => {
   return newMessage;
 };
 
-const getMessageService = async (conversationId, page = 1, limit = 20) => {
-  const skip = (page - 1) * limit;
+const getMessageService = async (conversationId, lastCreatedAt, limit = 20) => {
+  let query = { chatRoomId: conversationId };
 
-  const messages = await Message.find({ chatRoomId: conversationId })
+  if (lastCreatedAt) {
+    query.createdAt = { $lt: new Date(lastCreatedAt) };
+  }
+
+  const messages = await Message.find(query)
     .sort({ createdAt: -1 })
-    .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .lean();
 
-  if (messages.length === 0) {
+  if (!messages.length) {
     throw new Error("messages not found");
   }
 
-  const totalMessages = await Message.countDocuments({
-    chatRoomId: conversationId,
-  });
-
   return {
     messages: messages.reverse(),
-    totalMessages,
-    hasMore: skip + messages.length < totalMessages,
+    hasMore: messages.length === limit,
   };
 };
 

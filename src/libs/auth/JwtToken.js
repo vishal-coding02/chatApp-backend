@@ -11,7 +11,6 @@ function generateToken(user) {
     JWT_ACCESS_SECRET_KEY,
     { expiresIn: "15m" },
   );
-  console.log(accessToken);
   const refreshToken = jwt.sign(
     {
       id: user._id,
@@ -20,14 +19,12 @@ function generateToken(user) {
     JWT_REFRESH_SECRET_KEY,
     { expiresIn: "7d" },
   );
-  console.log(refreshToken);
 
   return { accessToken, refreshToken };
 }
 
 function verifyToken(req, res, next) {
   const authHeader = req.headers.authorization;
-  console.log("Auth header:", authHeader);
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return res.status(401).json({ message: "Token missing" });
@@ -51,7 +48,6 @@ function verifyToken(req, res, next) {
 
 async function refreshToken(req, res) {
   const token = req.cookies.refreshToken;
-  console.log(token);
   if (!token) return res.status(401).json({ message: "Token missing" });
 
   try {

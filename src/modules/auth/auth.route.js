@@ -8,8 +8,10 @@ const {
   verifyEmailController,
 } = require("../auth/auth.controller");
 
-authRouter.post("/api/auth/signup", signUpController);
-authRouter.post("/api/auth/login", loginController);
+const { loginLimit, signupLimit } = require("../../middlewares/RateLimit");
+
+authRouter.post("/api/auth/signup", signupLimit, signUpController);
+authRouter.post("/api/auth/login", loginLimit, loginController);
 authRouter.post("/api/auth/verify-email", verifyEmailController);
 authRouter.post("/api/auth/logout", logoutController);
 
