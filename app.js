@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const helmet = require("helmet");
 
 const authRouter = require("./src/modules/auth/auth.route");
 const refresTokenRouter = require("./src/modules/auth/refreshToken.route");
@@ -13,6 +14,9 @@ const app = express();
 
 app.use(cookieParser());
 app.use(corsConfig);
+
+app.set("trust proxy", 1);
+app.use(helmet());
 
 app.use(express.json());
 

@@ -1,6 +1,5 @@
 const { Server } = require("socket.io");
-
-const onlineUsers = new Set();
+const client = require("../libs/redisClient");
 
 const setupSocket = (server) => {
   const io = new Server(server, {
@@ -13,17 +12,19 @@ const setupSocket = (server) => {
   io.on("connection", (socket) => {
     console.log("socket connected:", socket.id);
 
-    socket.on("identify", (userId) => {
+    socket.on("identify", async (userId) => {
       socket.userId = userId;
-      onlineUsers.add(userId.toString());
 
-      io.emit("onlineUsers", Array.from(onlineUsers));
+      await client.sAdd("onlineUsers", userId.toString());
+
+      const users = await client.sMembers("onlineUsers");
+      io.emit("onlineUsers", users);
     });
 
+    // Join Rooms
     socket.on("joinRooms", ({ user, room }) => {
       const roomID = room;
       socket.join(roomID);
-      console.log(`${user} connected with ${roomID}`);
     });
 
     socket.on("leaveRoom", (roomId) => {
@@ -31,11 +32,13 @@ const setupSocket = (server) => {
       console.log("user leave room", roomId);
     });
 
+    // Send Message
     socket.on("sendMessage", ({ from, room, message, messageId }) => {
       socket.to(room).emit("message", { from, message, messageId });
       socket.emit("message", { from, message, messageId, self: true });
     });
 
+    // Set lastMessage
     socket.on(
       "lastMessageUpdate",
       ({ room, chatId, lastMessage, lastMessageAt }) => {
@@ -53,24 +56,29 @@ const setupSocket = (server) => {
       },
     );
 
+    // Typing Indicator
     socket.on("typing", ({ room, from }) => {
       socket.to(room).emit("userTyping", { userId: from, room });
     });
 
+    // Stop typing indicator
     socket.on("stopTyping", ({ room, from }) => {
       socket.to(room).emit("userStopTyping", { userId: from, room });
     });
 
+    // delete message
     socket.on("deleteMessage", ({ messageId, room }) => {
       socket.to(room).emit("messageDeleted", { messageId });
     });
 
-    socket.on("disconnect", () => {
+    // users disconnected
+    socket.on("disconnect", async () => {
       if (socket.userId) {
-        onlineUsers.delete(socket.userId.toString());
-        io.emit("onlineUsers", Array.from(onlineUsers));
+        await client.sRem("onlineUsers", socket.userId.toString());
+
+        const users = await client.sMembers("onlineUsers");
+        io.emit("onlineUsers", users);
       }
-      console.log("socket disconnected:");
     });
   });
 };
