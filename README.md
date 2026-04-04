@@ -33,7 +33,7 @@ https://chatapp-backend-production-82c9.up.railway.app
 ## Deployment
 
 - **Frontend (Vercel):** https://chat-app-frontend-mauve-pi.vercel.app/
-- **Backend (Railway):** https://chatapp-backend-production-05f2.up.railway.app/
+- **Backend (Railway):** https://chatapp-backend-production-82c9.up.railway.app
 
 ## Getting Started
 
