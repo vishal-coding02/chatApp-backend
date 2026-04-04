@@ -6,7 +6,6 @@ const MessageSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "chatRoom",
       required: true,
-      index: true,
     },
 
     senderId: {
@@ -24,6 +23,8 @@ const MessageSchema = new mongoose.Schema(
 );
 
 MessageSchema.index({ chatRoomId: 1, createdAt: -1 });
+
+MessageSchema.index({ chatRoomId: 1, senderId: 1 });
 
 const Message = mongoose.model("message", MessageSchema);
 

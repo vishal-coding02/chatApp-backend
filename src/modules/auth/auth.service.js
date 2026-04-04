@@ -20,11 +20,16 @@ const signUpService = async (data) => {
   }
 
   const existingUser = await Users.findOne({
-    $or: [{ userEmail: email }],
+    $or: [{ userEmail: email }, { userName: username }],
   });
 
   if (existingUser) {
-    throw new Error("User already exists");
+    if (existingUser.userEmail === email) {
+      throw new Error("Email already registered");
+    }
+    if (existingUser.userName === username) {
+      throw new Error("Username already taken");
+    }
   }
 
   const hashPass = await bcrypt.hash(password, 10);
@@ -76,7 +81,9 @@ async function loginService(data, res) {
     throw new Error("Please fill in all required fields");
   }
 
-  const user = await Users.findOne({ userEmail: email });
+  const user = await Users.findOne({ userEmail: email }).select(
+    "-createdAt -updatedAt",
+  );
 
   if (!user) throw new Error("User not found");
 

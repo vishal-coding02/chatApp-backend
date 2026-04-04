@@ -39,7 +39,7 @@ const myChatsController = async (req, res) => {
       .status(200)
       .json({ success: true, message: "chats fached successfully", chats });
   } catch (err) {
-    if (err.message === "no chats found") {
+    if (err.message === "chat not exist") {
       return res.status(404).json({ success: false, error: err.message });
     }
 

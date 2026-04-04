@@ -55,7 +55,7 @@ const myChatsService = async (id) => {
     .sort({ updatedAt: -1 });
 
   if (chats.length === 0) {
-    throw new Error("no chats found");
+    throw new Error("chat not exist");
   }
 
   return chats;
