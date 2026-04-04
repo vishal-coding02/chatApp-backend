@@ -4,7 +4,7 @@ This is the backend (REST API + Socket.io server) for the ChatApp project, built
 
 ## Live API
 
-https://chatapp-backend-production-05f2.up.railway.app/
+https://chatapp-backend-production-82c9.up.railway.app
 
 ## Features
 
