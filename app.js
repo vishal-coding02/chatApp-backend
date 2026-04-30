@@ -7,6 +7,7 @@ const refresTokenRouter = require("./src/modules/auth/refreshToken.route");
 const userRouter = require("./src/modules/user/user.route");
 const chatRouter = require("./src/modules/chat/chat.route");
 const messageRouter = require("./src/modules/message/message.route");
+const callRouter = require("./src/modules/call/call.route");
 
 const corsConfig = require("./src/config/cors");
 
@@ -25,6 +26,7 @@ app.use(authRouter);
 app.use(userRouter);
 app.use(chatRouter);
 app.use(messageRouter);
+app.use(callRouter);
 app.use(refresTokenRouter);
 
 module.exports = { app };
