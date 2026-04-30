@@ -19,7 +19,10 @@ const signUpController = async (req, res) => {
     ) {
       return res.status(400).json({ success: false, error: err.message });
     }
-    if (err.message === "User already exists") {
+    if (
+      err.message === "Email already registered" ||
+      err.message === "Username already taken"
+    ) {
       return res.status(409).json({ success: false, error: err.message });
     }
     return res.status(500).json({ success: false, error: err.message });

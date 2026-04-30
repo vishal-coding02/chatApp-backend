@@ -1,17 +1,11 @@
 const Message = require("../message/message.model");
 const ChatRoom = require("../chat/chat.model");
-const Users = require("../user/user.model");
 
 const sendMessageService = async (data, userId) => {
   const { chatRoomId, text } = data;
 
   if (!text || text.trim() === "") {
     throw new Error("message text required");
-  }
-
-  const user = await Users.findById(userId);
-  if (!user) {
-    throw new Error("user not found");
   }
 
   const chat = await ChatRoom.findById(chatRoomId);
@@ -64,6 +58,7 @@ const getMessageService = async (conversationId, lastCreatedAt, limit = 20) => {
   }
 
   const messages = await Message.find(query)
+    .select("-updatedAt -chatRoomId")
     .sort({ createdAt: -1 })
     .limit(limit)
     .lean();
