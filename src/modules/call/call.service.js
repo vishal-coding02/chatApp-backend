@@ -18,25 +18,32 @@ const addCallRecordService = async (records) => {
   return callRecord;
 };
 
-const missedCallsService = async (id) => {
+const callsService = async (id) => {
   const user = await Users.findById(id);
 
   if (!user) {
     throw new Error("user not found");
   }
 
-  const missCalls = await CallRecords.find({
-    receiverId: id,
-    callStatus: "missed",
+  const callsHistory = await CallRecords.find({
+    $or: [{ callerId: id }, { receiverId: id }],
   })
     .populate("callerId", "userFullName userName profilePic")
+    .populate("receiverId", "userFullName userName profilePic")
     .sort({ createdAt: -1 });
 
-  if (missCalls.length === 0) {
-    throw new Error("no misscalls found");
+  if (callsHistory.length === 0) {
+    throw new Error("no calls found");
   }
 
-  return missCalls;
+  return callsHistory;
 };
 
-module.exports = { addCallRecordService, missedCallsService };
+const markCallsReadService = async (userId) => {
+  await CallRecords.updateMany(
+    { receiverId: userId, read: false },
+    { $set: { read: true } },
+  );
+};
+
+module.exports = { addCallRecordService, callsService, markCallsReadService };

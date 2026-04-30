@@ -86,18 +86,33 @@ const setupSocket = (server) => {
 
     socket.on("call:reject", async ({ to, reason }) => {
       if (!socket.userId) return;
+
       socket.to(to).emit("call:rejected", { reason });
 
       const chatId = await client.get(`callChat:${socket.userId}`);
+
+      let status = "rejected";
+
+      if (reason === "no_answer") {
+        status = "missed";
+      }
+
+      if (reason === "rejected") {
+        status = "rejected";
+      }
 
       await addCallRecordService({
         chatId,
         callerId: to,
         receiverId: socket.userId,
-        callStatus: "missed",
+        callStatus: status,
         callType: "audio",
         callDuration: 0,
       });
+
+      if (status === "missed") {
+        io.to(socket.userId).emit("missed-call");
+      }
     });
 
     socket.on("call:end", async ({ to, type, duration }) => {
@@ -134,6 +149,7 @@ const setupSocket = (server) => {
           callType: "audio",
           callDuration: 0,
         });
+        io.to(to).emit("missed-call");
       }
     });
 

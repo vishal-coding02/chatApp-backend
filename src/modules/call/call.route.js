@@ -3,8 +3,12 @@ const callRouter = express.Router();
 
 const { verifyToken } = require("../../libs/auth/JwtToken");
 
-const { missedCallsController } = require("../call/call.controller");
+const {
+  callsController,
+  markCallsReadController,
+} = require("../call/call.controller");
 
-callRouter.get("/api/calls/missed", verifyToken, missedCallsController);
+callRouter.get("/api/calls/history", verifyToken, callsController);
+callRouter.patch("/api/calls/read", verifyToken, markCallsReadController);
 
 module.exports = callRouter;
