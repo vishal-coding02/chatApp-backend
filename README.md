@@ -19,6 +19,51 @@ https://chatapp-backend-production-82c9.up.railway.app
 - Rate limiting on API endpoints
 - MongoDB indexes for optimized query performance
 
+## 📞 Audio Calling (WebRTC + TURN)
+
+The backend now supports real-time audio calling using WebRTC with Socket.io signaling.
+
+### Features
+
+- WebRTC-based peer-to-peer audio calling
+- Socket.io signaling (offer, answer, ICE candidates)
+- Call states:
+  - Calling
+  - Ringing
+  - Ongoing
+  - Ended
+  - Missed
+  - Rejected
+  - Busy
+- Multiple incoming call handling (3rd caller scenario)
+- Missed call tracking with unread count
+- Call history storage
+- Auto timeout handling for unanswered calls
+
+---
+
+## TURN Server (Twilio)
+
+To support calls across different networks (NAT/firewall), TURN servers are used via Twilio.
+
+### How it works
+
+- Backend generates temporary TURN credentials using Twilio
+- Credentials are sent to frontend via API
+- WebRTC uses:
+  - STUN (direct connection)
+  - TURN (fallback relay)
+
+---
+
+## Call API Endpoints
+
+| Method | Endpoint                 | Description                 |
+| ------ | ------------------------ | --------------------------- |
+| GET    | `/api/calls/history`     | Get call history            |
+| PATCH  | `/api/calls/read`        | Mark missed calls as read   |
+| GET    | `/api/calls/ice-servers` | Get ICE servers (TURN/STUN) |
+
 ## Tech Stack
 
 - **Runtime:** Node.js
@@ -44,6 +89,7 @@ https://chatapp-backend-production-82c9.up.railway.app
 - Redis (local or Redis Cloud)
 
 ### Installation
+
 ```bash
 # Clone the repository
 git clone https://github.com/vishal-coding02/chatApp-backend.git
@@ -74,38 +120,41 @@ CLIENT_URL=http://localhost:5173
 SMTP_USER=your-username
 BREVO_API_KEY=your-brevo-api-key
 REDIS_URL=your-redis-connection-string
+TWILIO_ACCOUNT_SID=your_twilio_account_sid
+TWILIO_AUTH_TOKEN=your_twilio_auth_token
 
 ## Project Structure
 
 Backend/
 ├── src/
-│   ├── config/        # DB, Socket.io, Redis configuration
-│   ├── libs/          # JWT, Cloudinary setup
-│   ├── modules/
-│   │   ├── auth/      # Register, Login, JWT logic
-│   │   ├── chat/      # Chat create, delete, restore logic
-│   │   ├── message/   # Send, fetch, paginate messages
-│   │   └── user/      # User profile, all users
-│   └── utils/         # Helper functions, rate limiters
+│ ├── config/ # DB, Socket.io, Redis configuration
+│ ├── libs/ # JWT, Cloudinary setup
+│ ├── modules/
+│ │ ├── auth/ # Register, Login, JWT logic
+│ │ ├── chat/ # Chat create, delete, restore logic
+│ │ ├── message/ # Send, fetch, paginate messages
+│ │ └── user/ # User profile, all users
+│ │ └── call/ call features
+│ └── utils/ # Helper functions, rate limiters
 ├── .env
-├── app.js             # Express app setup
-├── server.js          # Entry point
+├── app.js # Express app setup
+├── server.js # Entry point
 └── package.json
 
 ## API Endpoints
 
-| Method | Endpoint                        | Description                        |
-| ------ | ------------------------------- | ---------------------------------- |
-| POST   | `/api/auth/register`            | Register new user                  |
-| POST   | `/api/auth/login`               | Login user                         |
-| GET    | `/api/user/:id`                 | Get user profile                   |
-| POST   | `/api/chat/request`             | Send message request               |
-| PATCH  | `/api/chats/:chatId/accept`     | Accept message request             |
-| GET    | `/api/chat`                     | Get all chats                      |
-| DELETE | `/api/chats/:chatId`            | Delete a chat                      |
+| Method | Endpoint                        | Description                            |
+| ------ | ------------------------------- | -------------------------------------- |
+| POST   | `/api/auth/register`            | Register new user                      |
+| POST   | `/api/auth/login`               | Login user                             |
+| GET    | `/api/user/:id`                 | Get user profile                       |
+| POST   | `/api/chat/request`             | Send message request                   |
+| PATCH  | `/api/chats/:chatId/accept`     | Accept message request                 |
+| GET    | `/api/chat`                     | Get all chats                          |
+| DELETE | `/api/chats/:chatId`            | Delete a chat                          |
 | GET    | `/api/messages/:conversationId` | Get messages (cursor-based pagination) |
-| POST   | `/api/message`                  | Send a message                     |
-| DELETE | `/api/messages/:messageId`      | Delete a message                   |
+| POST   | `/api/message`                  | Send a message                         |
+| DELETE | `/api/messages/:messageId`      | Delete a message                       |
 
 ## Frontend Repository
 
