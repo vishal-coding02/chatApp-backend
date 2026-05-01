@@ -1,4 +1,5 @@
 const { callsService, markCallsReadService } = require("./call.service");
+const twilio = require("twilio")
 
 const callsController = async (req, res) => {
   try {
@@ -31,4 +32,25 @@ const markCallsReadController = async (req, res) => {
   }
 };
 
-module.exports = { callsController, markCallsReadController };
+const client = twilio(
+  process.env.TWILIO_ACCOUNT_SID,
+  process.env.TWILIO_AUTH_TOKEN,
+);
+
+const getTurnCredentials = async (req, res) => {
+  try {
+    const token = await client.tokens.create();
+
+    return res.status(200).json({
+      iceServers: token.iceServers,
+    });
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to get TURN credentials" });
+  }
+};
+
+module.exports = {
+  callsController,
+  markCallsReadController,
+  getTurnCredentials,
+};
