@@ -31,6 +31,9 @@ const callRecordSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    deletedBy: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "users", required: false },
+    ],
     read: {
       type: Boolean,
       default: false,
