@@ -101,13 +101,24 @@ const setupSocket = (server) => {
         status = "rejected";
       }
 
-      await addCallRecordService({
+      const callRecord = await addCallRecordService({
         chatId,
         callerId: to,
         receiverId: socket.userId,
         callStatus: status,
         callType: "audio",
         callDuration: 0,
+      });
+
+      io.to(chatId).emit("call-record-saved", {
+        _id: callRecord._id,
+        chatId: callRecord.chatId,
+        callerId: callRecord.callerId,
+        receiverId: callRecord.receiverId,
+        callStatus: callRecord.callStatus,
+        callType: callRecord.callType,
+        callDuration: callRecord.callDuration,
+        createdAt: callRecord.createdAt,
       });
 
       if (status === "missed") {
@@ -127,7 +138,7 @@ const setupSocket = (server) => {
         socket.to(to).emit("call:ended");
 
         const chatId = await client.get(`callChat:${socket.userId}`);
-        await addCallRecordService({
+        const callRecord = await addCallRecordService({
           chatId,
           callerId: socket.userId,
           receiverId: to,
@@ -135,13 +146,24 @@ const setupSocket = (server) => {
           callType: "audio",
           callDuration: duration || 0,
         });
+
+        io.to(chatId).emit("call-record-saved", {
+          _id: callRecord._id,
+          chatId: callRecord.chatId,
+          callerId: callRecord.callerId,
+          receiverId: callRecord.receiverId,
+          callStatus: callRecord.callStatus,
+          callType: callRecord.callType,
+          callDuration: callRecord.callDuration,
+          createdAt: callRecord.createdAt,
+        });
       }
 
       if (type === "trying") {
         socket.to(to).emit("call:cancelled");
 
         const chatId = await client.get(`callChat:${socket.userId}`);
-        await addCallRecordService({
+        const callRecord = await addCallRecordService({
           chatId,
           callerId: socket.userId,
           receiverId: to,
@@ -149,6 +171,18 @@ const setupSocket = (server) => {
           callType: "audio",
           callDuration: 0,
         });
+
+        io.to(chatId).emit("call-record-saved", {
+          _id: callRecord._id,
+          chatId: callRecord.chatId,
+          callerId: callRecord.callerId,
+          receiverId: callRecord.receiverId,
+          callStatus: callRecord.callStatus,
+          callType: callRecord.callType,
+          callDuration: callRecord.callDuration,
+          createdAt: callRecord.createdAt,
+        });
+
         io.to(to).emit("missed-call");
       }
     });

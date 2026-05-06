@@ -1,10 +1,15 @@
-const { callsService, markCallsReadService } = require("./call.service");
-const twilio = require("twilio")
+const {
+  callsService,
+  markCallsReadService,
+  removeCallLogService,
+} = require("./call.service");
+const twilio = require("twilio");
 
 const callsController = async (req, res) => {
   try {
     const { id } = req.user;
-    const callsHistory = await callsService(id);
+    const { chatId } = req.params;
+    const callsHistory = await callsService({ id, chatId });
 
     return res.status(200).json({
       success: true,
@@ -49,8 +54,31 @@ const getTurnCredentials = async (req, res) => {
   }
 };
 
+const removeCallLogController = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    const result = await removeCallLogService(userId, id);
+
+    res.status(200).json({
+      success: true,
+      message: result.message,
+    });
+  } catch (error) {
+    if (error.message === "Unauthorized") {
+      return res.status(401).json({ success: false, error: error.message });
+    }
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   callsController,
   markCallsReadController,
   getTurnCredentials,
+  removeCallLogController,
 };
