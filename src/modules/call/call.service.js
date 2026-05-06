@@ -12,29 +12,36 @@ const addCallRecordService = async (records) => {
     callDuration: callDuration || 0,
     callType: callType || "audio",
     callStatus,
+    deletedBy: [],
   });
 
   await callRecord.save();
   return callRecord;
 };
 
-const callsService = async (id) => {
+const callsService = async ({ id, chatId }) => {
   const user = await Users.findById(id);
 
-  if (!user) {
-    throw new Error("user not found");
+  if (!user) throw new Error("user not found");
+
+  const query = {
+    $or: [{ callerId: id }, { receiverId: id }],
+
+    deletedBy: {
+      $nin: [id],
+    },
+  };
+
+  if (chatId) {
+    query.chatId = chatId;
   }
 
-  const callsHistory = await CallRecords.find({
-    $or: [{ callerId: id }, { receiverId: id }],
-  })
+  const callsHistory = await CallRecords.find(query)
     .populate("callerId", "userFullName userName profilePic")
     .populate("receiverId", "userFullName userName profilePic")
     .sort({ createdAt: -1 });
 
-  if (callsHistory.length === 0) {
-    throw new Error("no calls found");
-  }
+  if (callsHistory.length === 0) throw new Error("no calls found");
 
   return callsHistory;
 };
@@ -46,4 +53,54 @@ const markCallsReadService = async (userId) => {
   );
 };
 
-module.exports = { addCallRecordService, callsService, markCallsReadService };
+const removeCallLogService = async (id, callLogID) => {
+  if (callLogID === "all") {
+    await CallRecords.updateMany(
+      {
+        $or: [{ callerId: id }, { receiverId: id }],
+        deletedBy: { $nin: [id] },
+      },
+      {
+        $push: {
+          deletedBy: id,
+        },
+      },
+    );
+
+    return {
+      success: true,
+      message: "All call logs removed",
+    };
+  }
+
+  const callLog = await CallRecords.findById(callLogID);
+
+  if (!callLog) {
+    throw new Error("Call log not found");
+  }
+
+  const isUserPartOfCall =
+    callLog.callerId.toString() === id || callLog.receiverId.toString() === id;
+
+  if (!isUserPartOfCall) {
+    throw new Error("Unauthorized");
+  }
+
+  if (!callLog.deletedBy.includes(id)) {
+    callLog.deletedBy.push(id);
+  }
+
+  await callLog.save();
+
+  return {
+    success: true,
+    message: "Call log removed successfully",
+  };
+};
+
+module.exports = {
+  addCallRecordService,
+  callsService,
+  markCallsReadService,
+  removeCallLogService,
+};
