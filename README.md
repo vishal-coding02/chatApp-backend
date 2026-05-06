@@ -19,7 +19,7 @@ https://chatapp-backend-production-82c9.up.railway.app
 - Rate limiting on API endpoints
 - MongoDB indexes for optimized query performance
 
-## 📞 Audio Calling (WebRTC + TURN)
+## Audio Calling (WebRTC + TURN)
 
 The backend now supports real-time audio calling using WebRTC with Socket.io signaling.
 
@@ -56,13 +56,23 @@ To support calls across different networks (NAT/firewall), TURN servers are used
 
 ---
 
+### Updated Call Features
+
+- Call records now appear inside chat messages
+- Callback support from call logs
+- Soft delete support for call logs
+- Clear all call logs functionality
+
 ## Call API Endpoints
 
-| Method | Endpoint                 | Description                 |
-| ------ | ------------------------ | --------------------------- |
-| GET    | `/api/calls/history`     | Get call history            |
-| PATCH  | `/api/calls/read`        | Mark missed calls as read   |
-| GET    | `/api/calls/ice-servers` | Get ICE servers (TURN/STUN) |
+| Method | Endpoint                     | Description                    |
+| ------ | ---------------------------- | ------------------------------ |
+| GET    | `/api/calls/history`         | Get all call history           |
+| GET    | `/api/calls/history/:chatId` | Get chat specific call history |
+| PATCH  | `/api/calls/read`            | Mark missed calls as read      |
+| GET    | `/api/calls/ice-servers`     | Get ICE servers (TURN/STUN)    |
+| PATCH  | `/api/calls/:id`             | Remove single call log         |
+| PATCH  | `/api/calls/all`             | Clear all call logs            |
 
 ## Tech Stack
 
