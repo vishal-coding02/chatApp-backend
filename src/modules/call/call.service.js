@@ -26,10 +26,6 @@ const callsService = async ({ id, chatId }) => {
 
   const query = {
     $or: [{ callerId: id }, { receiverId: id }],
-
-    deletedBy: {
-      $nin: [id],
-    },
   };
 
   if (chatId) {
