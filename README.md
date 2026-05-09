@@ -19,7 +19,7 @@ https://chatapp-backend-production-82c9.up.railway.app
 - Rate limiting on API endpoints
 - MongoDB indexes for optimized query performance
 
-## 📞 Audio Calling (WebRTC + TURN)
+## Audio Calling (WebRTC + TURN)
 
 The backend now supports real-time audio calling using WebRTC with Socket.io signaling.
 
