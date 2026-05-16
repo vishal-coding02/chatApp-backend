@@ -1,5 +1,7 @@
 const Message = require("../message/message.model");
 const ChatRoom = require("../chat/chat.model");
+const client = require("../../libs/redisClient");
+const { sendPushNotification } = require("../../utils/PushNotification");
 
 const sendMessageService = async (data, userId) => {
   const { chatRoomId, text } = data;
@@ -46,6 +48,33 @@ const sendMessageService = async (data, userId) => {
   chat.lastMessageAt = new Date();
   chat.hasMessage = true;
   await chat.save();
+
+  try {
+    const receiverId = chat.participants.find(
+      (p) => p.toString() !== userId.toString(),
+    );
+
+    const isOnline = await client.sIsMember(
+      "onlineUsers",
+      receiverId.toString(),
+    );
+
+    if (!isOnline) {
+      const User = require("../user/user.model");
+      const sender = await User.findById(userId).select("userFullName");
+
+      await sendPushNotification(receiverId, {
+        title: sender?.userFullName || "New Message",
+        body: "sent you a message",
+        data: {
+          type: "message",
+          chatId: chatRoomId.toString(),
+        },
+      });
+    }
+  } catch (pushError) {
+    console.error("Push notification failed:", pushError.message);
+  }
 
   return newMessage;
 };
