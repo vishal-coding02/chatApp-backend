@@ -1,6 +1,5 @@
 const Message = require("../message/message.model");
 const ChatRoom = require("../chat/chat.model");
-const client = require("../../libs/redisClient");
 const { sendPushNotification } = require("../../utils/PushNotification");
 
 const sendMessageService = async (data, userId) => {
@@ -54,10 +53,11 @@ const sendMessageService = async (data, userId) => {
       (p) => p.toString() !== userId.toString(),
     );
 
-    const isOnline = await client.sIsMember(
-      "onlineUsers",
-      receiverId.toString(),
-    );
+    const { getIO } = require("../../config/socket");
+    const io = getIO();
+
+    const receiverSockets = await io.in(receiverId.toString()).fetchSockets();
+    const isOnline = receiverSockets.length > 0;
 
     if (!isOnline) {
       const User = require("../user/user.model");

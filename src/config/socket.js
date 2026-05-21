@@ -2,8 +2,10 @@ const { Server } = require("socket.io");
 const client = require("../libs/redisClient");
 const { addCallRecordService } = require("../modules/call/call.service");
 
+let io;
+
 const setupSocket = (server) => {
-  const io = new Server(server, {
+  io = new Server(server, {
     cors: {
       origin: process.env.FRONTEND_URL,
       credentials: true,
@@ -229,4 +231,6 @@ const setupSocket = (server) => {
   });
 };
 
-module.exports = { setupSocket };
+const getIO = () => io;
+
+module.exports = { setupSocket, getIO };
