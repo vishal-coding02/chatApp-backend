@@ -4,17 +4,23 @@ const pushTokenSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "users",
       required: true,
+      unique: true,
     },
-    fcmToken: {
-      type: String,
-      required: true,
-    },
-    device: {
-      type: String,
-      default: "unknown",
-    },
+    tokens: [
+      {
+        fcmToken: {
+          type: String,
+          required: true,
+        },
+
+        device: {
+          type: String,
+          default: "unknown",
+        },
+      },
+    ],
   },
   { timestamps: true },
 );
