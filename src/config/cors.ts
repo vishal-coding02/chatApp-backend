@@ -1,4 +1,4 @@
-const cors = require("cors");
+import cors from "cors";
 
 const corsConfig = cors({
   origin: process.env.FRONTEND_URL,
@@ -7,4 +7,4 @@ const corsConfig = cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 });
 
-module.exports = corsConfig;
+export default corsConfig;

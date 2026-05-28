@@ -1,7 +1,14 @@
-const admin = require("../config/firebase.js");
-const PushToken = require("../modules/notification/notification.model.js");
+import admin from "../config/firebase";
+import PushToken from "../modules/notification/notification.model";
+import type {
+  NotificationPayload,
+  TokenItem,
+} from "../interfaces/notification";
 
-const sendPushNotification = async (userId, payload) => {
+const sendPushNotification = async (
+  userId: string,
+  payload: NotificationPayload,
+): Promise<void> => {
   try {
     const tokenDoc = await PushToken.findOne({
       userId,
@@ -12,7 +19,7 @@ const sendPushNotification = async (userId, payload) => {
       return;
     }
 
-    for (const item of tokenDoc.tokens) {
+    for (const item of tokenDoc.tokens as TokenItem[]) {
       try {
         const message = {
           token: item.fcmToken,
@@ -31,7 +38,7 @@ const sendPushNotification = async (userId, payload) => {
         await admin.messaging().send(message);
 
         console.log("Push sent successfully");
-      } catch (error) {
+      } catch (error: any) {
         console.error("FCM full error:", error);
 
         if (
@@ -39,18 +46,16 @@ const sendPushNotification = async (userId, payload) => {
           error.code === "messaging/invalid-registration-token"
         ) {
           tokenDoc.tokens = tokenDoc.tokens.filter(
-            (t) => t.fcmToken !== item.fcmToken,
-          );
+            (t: TokenItem) => t.fcmToken !== item.fcmToken,
+          ) as typeof tokenDoc.tokens;
 
           await tokenDoc.save();
         }
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
   }
 };
 
-module.exports = {
-  sendPushNotification,
-};
+export { sendPushNotification };
