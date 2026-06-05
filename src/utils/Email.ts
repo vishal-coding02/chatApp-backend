@@ -1,7 +1,15 @@
-const { transporter } = require("./transporter");
-const SEND_EMAIL_TEMPLATE = require("./email/templates/sendEmailTemplate");
+import { transporter } from "./transporter";
+import SEND_EMAIL_TEMPLATE from "./email/templates/sendEmailTemplate";
 
-const sendEmail = async ({ toEmail, userFullName, token }) => {
+export const sendEmail = async ({
+  toEmail,
+  userFullName,
+  token,
+}: {
+  toEmail: string;
+  userFullName: string;
+  token: string;
+}) => {
   const verifyLink = `${process.env.FRONTEND_URL}/verify-email?token=${token}`;
 
   const htmlContent = SEND_EMAIL_TEMPLATE.replace(
@@ -12,7 +20,7 @@ const sendEmail = async ({ toEmail, userFullName, token }) => {
   try {
     await transporter.sendTransacEmail({
       sender: {
-        email: process.env.SMTP_USER,
+        email: process.env.SMTP_USER as string,
         name: "ChatHub",
       },
       to: [
@@ -28,5 +36,3 @@ const sendEmail = async ({ toEmail, userFullName, token }) => {
     throw new Error("Email sending failed");
   }
 };
-
-module.exports = { sendEmail };

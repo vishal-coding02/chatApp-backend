@@ -1,8 +1,10 @@
-const jwt = require("jsonwebtoken");
-const JWT_ACCESS_SECRET_KEY = process.env.ACCESS_SECRET_KEY;
-const JWT_REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY;
+import { Request, Response, NextFunction } from "express";
+import jwt from "jsonwebtoken";
+const JWT_ACCESS_SECRET_KEY = process.env.ACCESS_SECRET_KEY as string;
+const JWT_REFRESH_SECRET_KEY = process.env.REFRESH_SECRET_KEY as string;
+import type { User, TokenPayload } from "../../interfaces/Jwt";
 
-function generateToken(user) {
+function generateToken(user: User) {
   const accessToken = jwt.sign(
     {
       id: user._id,
@@ -23,7 +25,7 @@ function generateToken(user) {
   return { accessToken, refreshToken };
 }
 
-function verifyToken(req, res, next) {
+function verifyToken(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -34,10 +36,10 @@ function verifyToken(req, res, next) {
 
   try {
     const decoded = jwt.verify(token, JWT_ACCESS_SECRET_KEY);
-    req.user = decoded;
-    req.token = token;
+    (req as any).user = decoded;
+    (req as any).token = token;
     next();
-  } catch (err) {
+  } catch (err: any) {
     console.log("Token error:", err.message);
     if (err.name === "TokenExpiredError") {
       return res.status(401).json({ message: "Token expired" });
@@ -46,12 +48,12 @@ function verifyToken(req, res, next) {
   }
 }
 
-async function refreshToken(req, res) {
+async function refreshToken(req: Request, res: Response) {
   const token = req.cookies.refreshToken;
   if (!token) return res.status(401).json({ message: "Token missing" });
 
   try {
-    const payload = jwt.verify(token, JWT_REFRESH_SECRET_KEY);
+    const payload = jwt.verify(token, JWT_REFRESH_SECRET_KEY) as TokenPayload;
     const newAccessToken = jwt.sign(
       {
         id: payload.id,
@@ -66,7 +68,7 @@ async function refreshToken(req, res) {
   }
 }
 
-module.exports = {
+export {
   jwt,
   JWT_ACCESS_SECRET_KEY,
   JWT_REFRESH_SECRET_KEY,

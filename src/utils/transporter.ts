@@ -1,4 +1,5 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 const SibApiV3Sdk = require("sib-api-v3-sdk");
 
 const client = SibApiV3Sdk.ApiClient.instance;
@@ -8,4 +9,4 @@ apiKey.apiKey = process.env.BREVO_API_KEY;
 
 const transporter = new SibApiV3Sdk.TransactionalEmailsApi();
 
-module.exports = { transporter };
+export { transporter };

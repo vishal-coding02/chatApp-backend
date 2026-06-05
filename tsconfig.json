@@ -16,9 +16,7 @@
 
     "forceConsistentCasingInFileNames": true,
 
-    "sourceMap": true,
-
-    "types": ["node"]
+    "sourceMap": true
   },
 
   "include": ["**/*.ts", "**/*.js"],

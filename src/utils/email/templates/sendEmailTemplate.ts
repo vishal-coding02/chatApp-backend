@@ -53,4 +53,4 @@ This link will expire in 5 minutes
 </body>
 </html>`;
 
-module.exports = SEND_EMAIL_TEMPLATE;
+export default SEND_EMAIL_TEMPLATE;
